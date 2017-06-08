@@ -151,7 +151,9 @@ int main() {
           Eigen::VectorXd state(6);
           state << x, y, psi, v, cte, epsi;
 
+
           vector<double> result = mpc.Solve(state, coeffs);
+
 
           steer_value = -result[0] / deg2rad(25);
           throttle_value = result[1];
