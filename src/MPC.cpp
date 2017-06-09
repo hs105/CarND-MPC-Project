@@ -6,7 +6,7 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 12;
+size_t N = 8;        // Choosing a large period (N*dt) causes a big error in tranjectory  estimation
 double dt = 0.07;
 
 // This value assumes the model presented in the classroom is used.
@@ -205,14 +205,12 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   // The upper and lower limits of delta are set to -25 and 25
   // degrees (values in radians).
-  // NOTE: Feel free to change this to something else.
   for (int i = delta_start; i < a_start; i++) {
     vars_lowerbound[i] = -0.436332;
     vars_upperbound[i] = 0.436332;
   }
 
-  // Acceleration/decceleration upper and lower limits.
-  // NOTE: Feel free to change this to something else.
+  // Acceleration/decceleration upper and lower limits.  
   for (int i = a_start; i < n_vars; i++) {
     vars_lowerbound[i] = -1.0;
     vars_upperbound[i] = 1.0;
