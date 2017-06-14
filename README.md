@@ -1,4 +1,4 @@
-# Writeup
+# Write-up
 
 In this project I implemented MPC given a kinematic model of the vehicle.
 
@@ -8,7 +8,7 @@ The following errors was considered in our MPC implementation:
 - Cross track error (cte)
 - Angle error (e\psi)
 
-MPC predicts these errors for `N` next steps and tries to minize these errors.
+MPC predicts these errors for `N` next steps and tries to minimize these errors.
 
 
 ### Vehicle model
@@ -49,12 +49,12 @@ Cost = w1 . cte ^ 2
      + w7 .(act_next - act) ^ 2
 ```
 
-The weights `w1...w7` were set emprically, but they can also be learnt.
+The weights `w1...w7` were set empirically, but they can also be learnt.
 
 
 ### How to set the timestep length and duration
 
-I set `N=8` and `dt=0.07` emprically. Choosing a large period (`N*dt`), for example `N=12`, caused a big error in tranjectory  estimation and resulted in large oscillation.
+I set `N=8` and `dt=0.07` empirically. Choosing a large period (`N*dt`), for example `N=12`, caused a big error in trajectory  estimation and resulted in large oscillation.
 
 To have a smoother transition, I `w6` and `w7` as follows:
 ```
@@ -69,7 +69,7 @@ w7 = w_dif_str = 3000.0
 
 ### Preprocessing data
 
-After receiving waypoints, I transfered those points to the vehicle coordinate system. Also, the predicted trajectory were sent to the simulator to overlay on the screen.
+After receiving waypoints, I transferred those points to the vehicle coordinate system. Also, the predicted trajectory were sent to the simulator to overlay on the screen.
 
 
 ### Account for latency
