@@ -1,5 +1,102 @@
+# Writeup
+
+In this project I implemented MPC given a kinematic model of the vehicle.
+
+### Errors
+
+The following errors was considered in our MPC implementation:
+- Cross track error (cte)
+- Angle error (e\psi)
+
+MPC predicts these errors for `N` next steps and tries to minize these errors.
+
+
+### Vehicle model
+
+We used a simple kinematic model. The states and actuators were selected as follows:
+
+- State = `[x, y, psi, v]`
+- Actuators = `[delta, act.]`   &nbsp;&nbsp;&nbsp;&nbsp;   delta:  steering angle     &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;act.: throttle pedal
+
+
+The next state is calculated as follows:
+
+```
+x' = x  +  v cos(psi) dt
+y' = y  +  v sin(psi) dt
+psi' = psi  +  v/Lf  delta dt
+v' = v + act. dt
+```
+
+Now, we can predict the next errors:
+
+```
+cte' = cte  +  v sin(e\psi) dt
+e\psi' = e\psi +  v/Lf  delta dt
+```
+
+### Cost function
+
+We defined the cost function as follows:
+
+```
+Cost = w1 . cte ^ 2
+     + w2 . e\psi ^ 2 
+     + w3 . (v - 70) ^ 2 
+     + w4 . delta ^ 2 
+     + w5 .act. ^ 2 
+     + w6 .(delta_next - delta) ^ 2 
+     + w7 .(act_next - act) ^ 2
+```
+
+The weights `w1...w7` were set emprically, but they can also be learnt.
+
+
+### How to set the timestep length and duration
+
+I set `N=8` and `dt=0.07` emprically. Choosing a large period (`N*dt`), for example `N=12`, caused a big error in tranjectory  estimation and resulted in large oscillation.
+
+To have a smoother transition, I `w6` and `w7` as follows:
+```
+w1 = w_cte = 10.0
+w2 = w_epsi = 50.0
+w3 = w_v = 1.0
+w4 = w_thr = 10.0
+w5 = w_str = 3000.0
+w6 = w_dif_thr = 10.0
+w7 = w_dif_str = 3000.0
+```
+
+### Preprocessing data
+
+After receiving waypoints, I transfered those points to the vehicle coordinate system. Also, the predicted trajectory were sent to the simulator to overlay on the screen.
+
+
+### Account for latency
+
+I consider `100 mili sec.` for command propagation latency as follows:
+```
+double latency = 0.1; // 100 mili sec.
+
+double delta = - steer_value;
+double npx = px + v * cos(psi) * latency;
+double npy = py + v * sin(psi) * latency;
+double npsi = psi + v * (delta / Lf) * latency;
+double nv = v + throttle_value * latency;
+
+// convert states to vehicle space
+double xd = npx - px;
+double yd = npy-  py;
+double x = xd * cos(psi) + yd * sin(psi);
+double y = yd * cos(psi) - xd * sin(psi);
+v = nv;
+psi = npsi - psi;
+```
+
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
+
+
 
 ---
 
